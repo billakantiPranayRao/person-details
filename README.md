@@ -1,13 +1,13 @@
 # person-details
 Created Person springboot application to Create,Update,Get,Delete the person data like firestName, lastName, age, favourite colour.
 
-##Technologies used
+##Technologies used:
 I have developed the application in Springboot with JPA.
 Project: Maven Project
 SpringBoot Version:2.4.2
 Java version:8
 
-###Dependencies added
+###Dependencies added:
 1.spring-boot-starter-data-jpa
 2.spring-boot-starter-web
 3.spring-boot-starter-test
@@ -18,8 +18,8 @@ Java version:8
 8.springfox-swagger2
 9.springfox-swagger-ui
 
-####Data Base Used
-in memory data base H2.
+####DataBase Used:
+in memory database H2.
 ##### plugins used
 spring-boot-maven-plugin
 
@@ -40,11 +40,11 @@ PersonSecurityConfig.class--->In this class i have extended WebSecurityConfigure
 ########Properties
 application.properties -----> I have given basic properties like port,database connection,username,password and mainly Oauth2 security properties to be extended in future if required for advanced security.
 
-#########Dockerizing the application
+#########Dockerizing the application:
 Dockerfile---->given commands and instructions like FROM,EXPOSE,ADD,ENTRYPOINT to upload the application jar in container for creation of the image.
 
 
-##########Test Cases Created
+##########Test Cases Created:
 PersonMokitoIntegrationTest.class --->For integration Testing using Mockito on controller class for RestAPI end points.
 with this without effecting the actual database did the operations like POST,GET,PUT,DELETE with positive and negative scenarios.
 
