@@ -5,6 +5,7 @@ import embl.ebi.persondetails.model.Person;
 import embl.ebi.persondetails.service.PersonService;
 import mockit.Expectations;
 import mockit.Injectable;
+import mockit.Mocked;
 import mockit.Tested;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class PersonJMockitTest {
 
 
     @Test
-    public void getPersonsTest() {
+    public void getPersonsTest(@Mocked Person person) {
         new Expectations()
         {
             {
@@ -35,39 +36,38 @@ public class PersonJMockitTest {
         ResponseEntity<List<Person>> response = personController.getAllPersons();
         assertEquals(404, response.getStatusCodeValue());
 
-
-    }
-
-
-    /*@Test
-    public void getContentCardModalTestException() throws Exception
-    {
         new Expectations()
         {
             {
-                contentCardsModalWidgetService.getContentCardModal(anyString);
-                result = new Exception();
+                personService.getAllPersons();
+                result = person;
             }
         };
-        ResponseEntity<ContentCardModalInfo> response = contentCardsWidgetController.getContentCardModal("TEST");
-        assertEquals(500, response.getStatusCodeValue());
-    }
 
+        ResponseEntity<List<Person>> res = personController.getAllPersons();
+        assertEquals(200, res.getStatusCodeValue());
+
+
+    }
 
     @Test
-    public void getCurrentCoverageTestException() throws Exception
-    {
+    public  void GetPersonDetailsByIdTest(@Mocked Person person){
+
+        int id =1;
         new Expectations()
         {
             {
-                currentCoverageContentCardModalService.getCurrentCoverageContentCardModalDetails();
-                result = new Exception();
+                personService.getPersonById(1);
+                result = person;
             }
         };
-        ResponseEntity<CurrentYearCoverage> response = contentCardsWidgetController.getCurrentCoverage();
-        assertEquals(500, response.getStatusCodeValue());
-    }*/
 
+        ResponseEntity<Person> response = personController.getAllPersonsById(id);
+        assertEquals(200, response.getStatusCodeValue());
+
+
+
+    }
 
 }
 

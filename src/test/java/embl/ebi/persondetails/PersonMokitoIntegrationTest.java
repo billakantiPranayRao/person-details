@@ -2,7 +2,6 @@ package embl.ebi.persondetails;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import embl.ebi.persondetails.controller.PersonController;
-import embl.ebi.persondetails.exception.PersonNotFoundException;
 import embl.ebi.persondetails.model.Person;
 import embl.ebi.persondetails.service.PersonServiceImpl;
 import org.junit.Before;
@@ -12,37 +11,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTestContextBootstrapper;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.util.NestedServletException;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = PersonController.class)
@@ -63,34 +43,38 @@ public class PersonMokitoIntegrationTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @MockBean
+    private Person person;
+
 
     @Test
-    public void getPersonByIdTest() throws Exception{
-        int id =1;
+    public void getPersonByIdTest() throws Exception {
+        int id = 2;
 
-        personData();
-        Mockito.when(personService.getPersonById(1)).thenReturn(personData());
 
-        mockMvc.perform(get("/persons/ "+id+"")
+        Mockito.when(personService.getPersonById(2)).thenReturn(person);
+
+        mockMvc.perform(get("/persons/ " + id + "")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
-                .andReturn().getResponse().getContentAsString().isEmpty();
+                .andReturn().getResponse().getContentAsString().contains(person.getFirst_name());
 
     }
 
     @Test
     public void createPersonDataTest() throws Exception {
 
-        personData();
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/createPersons")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(asJsonString(personData()))).andExpect(MockMvcResultMatchers.status().isOk())
-                    .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/createPersons")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(asJsonString(person)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn().getResponse().getContentAsString();
 
     }
 
@@ -98,38 +82,36 @@ public class PersonMokitoIntegrationTest {
     @Test
     public void updatePersonDataTest() throws Exception {
 
-        long id = 1;
-        personData();
-        String UpdateData =
-                "{\n" +
-                        "        \"id\": 1,\n" +
-                        "        \"first_name\": \"Sarah\",\n" +
-                        "        \"last_name\": \"Robinson\",\n" +
-                        "        \"age\": 52,\n" +
-                        "        \"favourite_colour\": \"white\"\n" +
-                        "    }";
+        long id = 2;
 
-        mockMvc.perform(put("/persons/ "+id+"")
+
+        Person updatePerson = new Person();
+
+        updatePerson.setId(2);
+        updatePerson.setFirst_name("India");
+        updatePerson.setAge(10);
+
+        mockMvc.perform(put("/persons/ " + id + "")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(UpdateData)
+                .content(asJsonString(updatePerson))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString().contains("Sarah");
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn().getResponse().getContentAsString().contains("India");
 
     }
 
     @Test
     public void deletePersonsDataTest() throws Exception {
 
-        createPersonDataTest();
-        int id = 1;
-        mockMvc.perform(delete("/persons/ "+id+"")
+        Mockito.when(personService.getPersonById(2)).thenReturn(person);
+        mockMvc.perform(delete("/persons/{id} ", 2)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
-    public  String asJsonString(final Object obj) {
+    public String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
@@ -151,13 +133,12 @@ public class PersonMokitoIntegrationTest {
     }
 
     @Test
-    public void getPersonByIdNotExistTest() throws Exception{
-        int id =2;
+    public void getPersonByIdNotExistTest() throws Exception {
+        int id = 1;
 
-        personData();
-        Mockito.when(personService.getPersonById(1)).thenReturn(personData());
+        Mockito.when(personService.getPersonById(2)).thenReturn(person);
 
-        mockMvc.perform(get("/persons/ "+id+"")
+        mockMvc.perform(get("/persons/ " + id + "")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -166,53 +147,37 @@ public class PersonMokitoIntegrationTest {
 
     }
 
-    @Test
-    public void DeleteByNotExistId() throws Exception {
-
-        int id =2;
-
-        personData();
-        Mockito.when(personService.getPersonById(1)).thenReturn(personData());
-
-        mockMvc.perform(delete("/persons/ "+id+"")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-
-    }
 
     @Test
     public void updatePersonDataNotExistTest() throws Exception {
-        long id = 2;
-        personData();
-        String UpdateData =
-                "{\n" +
-                        "        \"id\": 1,\n" +
-                        "        \"first_name\": \"Sarah\",\n" +
-                        "        \"last_name\": \"Robinson\",\n" +
-                        "        \"age\": 52,\n" +
-                        "        \"favourite_colour\": \"white\"\n" +
-                        "    }";
+        long id = 1;
 
-        mockMvc.perform(put("/persons/ "+id+"")
+        Person updatePerson = new Person();
+
+        updatePerson.setId(2);
+        updatePerson.setFirst_name("India");
+        updatePerson.setAge(10);
+
+
+        mockMvc.perform(put("/persons/ " + id + "")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(UpdateData)
+                .content(asJsonString(updatePerson))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
     }
 
 
-    public Person personData(){
-        Person  person = new Person();
+    @Before
+    public void personData() {
+        person = new Person();
 
-        person.setId(1);
+        person.setId(2);
         person.setFirst_name("EMBL");
         person.setLast_name("EBI");
         person.setAge(20);
         person.setFavourite_colour("Blue");
 
-        return person;
 
     }
 

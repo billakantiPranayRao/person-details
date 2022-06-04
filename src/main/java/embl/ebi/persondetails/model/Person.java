@@ -1,10 +1,13 @@
 package embl.ebi.persondetails.model;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "person")
+@Component
 public class Person {
 
     @Id

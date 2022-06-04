@@ -15,7 +15,10 @@ import java.util.List;
 public class PersonController {
 
     @Autowired
-   private PersonService personService;
+    private final PersonService personService;
+
+    @Autowired
+    private Person person;
 
     public PersonController(PersonService personService) {
         this.personService = personService;
@@ -50,17 +53,17 @@ public class PersonController {
     }
 
     @GetMapping("/persons/{id}")
-    public ResponseEntity<Person> getAllPersonsById(@PathVariable long id, Person person){
+    public ResponseEntity<Person> getAllPersonsById(@PathVariable long id){
 
-            Person person1 = personService.getPersonById(id);
+        person = personService.getPersonById(id);
 
-            if ((person1 == null)){
+        if ((person == null)){
 
-              return   ResponseEntity.notFound().build();
-            }else
+            return   ResponseEntity.notFound().build();
+        }else
 
 
-        return ResponseEntity.ok().body(personService.getPersonById(id));
+            return ResponseEntity.ok().body(personService.getPersonById(id));
     }
 
     //@PreAuthorize("permitAll()")
@@ -72,7 +75,7 @@ public class PersonController {
             return ResponseEntity.badRequest().build();
         }
 
-                return  ResponseEntity.ok().body(personService.createPerson(createPersons));
+        return  ResponseEntity.ok().body(personService.createPerson(createPersons));
 
 
     }
@@ -83,14 +86,19 @@ public class PersonController {
 
         if (person.getId()!=id){
 
-          return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }else
-       return ResponseEntity.ok().body(this.personService.updatePerson(person));
+            return ResponseEntity.ok().body(this.personService.updatePerson(person));
 
     }
 
     @DeleteMapping("/persons/{id}")
     public ResponseEntity<Person> deletePerson(@PathVariable long id){
+
+        if (personService.getPersonById(id)== null){
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         try{
             this.personService.deletePerson(id);

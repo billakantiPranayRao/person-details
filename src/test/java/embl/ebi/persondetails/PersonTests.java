@@ -2,14 +2,11 @@ package embl.ebi.persondetails;
 
 import embl.ebi.persondetails.model.Person;
 import embl.ebi.persondetails.repository.PersonRepository;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.Rollback;
-import org.junit.After;
 
 
 import javax.transaction.Transactional;
@@ -42,7 +39,7 @@ public class PersonTests {
 
     @Test
     @Order(2)
-    @Rollback(true)
+    @Rollback()
     public  void PersonDataCreate(){
 
         Person person = new Person();

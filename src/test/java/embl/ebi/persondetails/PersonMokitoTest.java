@@ -1,27 +1,24 @@
 package embl.ebi.persondetails;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import embl.ebi.persondetails.exception.PersonNotFoundException;
 import embl.ebi.persondetails.model.Person;
 import embl.ebi.persondetails.repository.PersonRepository;
 import embl.ebi.persondetails.service.PersonServiceImpl;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

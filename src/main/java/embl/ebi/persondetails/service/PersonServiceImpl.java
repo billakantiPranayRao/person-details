@@ -4,7 +4,6 @@ import embl.ebi.persondetails.exception.PersonNotFoundException;
 import embl.ebi.persondetails.model.Person;
 import embl.ebi.persondetails.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
