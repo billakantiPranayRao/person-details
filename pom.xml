@@ -27,6 +27,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>1.42</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>

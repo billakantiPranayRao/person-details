@@ -5,7 +5,6 @@ import embl.ebi.persondetails.controller.PersonController;
 import embl.ebi.persondetails.exception.PersonNotFoundException;
 import embl.ebi.persondetails.model.Person;
 import embl.ebi.persondetails.service.PersonServiceImpl;
-import javafx.application.Application;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

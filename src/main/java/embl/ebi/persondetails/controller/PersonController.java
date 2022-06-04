@@ -34,8 +34,14 @@ public class PersonController {
     @GetMapping("/persons")
     public ResponseEntity<List<Person>> getAllPersons(){
 
+        List<Person> list;
 
-        List<Person> list = personService.getAllPersons();
+        try {
+            list = personService.getAllPersons();
+        }catch (Exception e){
+
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
 
         if(list.size()==0){
             return ResponseEntity.notFound().build();
